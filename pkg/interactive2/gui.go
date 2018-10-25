@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/jayunit100/blackduck-ctl/pkg/apps"
+	"github.com/jayunit100/blackduckctl/pkg/apps"
 	"github.com/manifoldco/promptui"
 )
 
@@ -22,6 +22,12 @@ func Launch() {
 				"EXIT",
 			},
 		}
+
+		/**
+		* Magic ! Infinite loop always prompts another action.
+		* After the user initiates a new task in the UI, the cursor is
+		* reset to 0,0 uin the 033 escape code.
+		 */
 		_, result, _ := prompt.Run()
 		fmt.Printf("\033[0;0H")
 

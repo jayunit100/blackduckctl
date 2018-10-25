@@ -15,22 +15,25 @@ package apps
 // limitations under the License.
 
 import (
-	"bytes"
 	"fmt"
 	"os/exec"
+	"time"
 
+	"github.com/jayunit100/blackduckctl/pkg/util"
 	"github.com/spf13/cobra"
 )
 
 func runCmd(cmd string, args ...string) {
 	cmd2 := exec.Command(cmd, args...)
-	var out bytes.Buffer
-	cmd2.Stdout = &out
-	cmd2.Run()
-	fmt.Printf("%v", out.String())
+	err, ret := util.RunWithTimeout(cmd2, 10*time.Second)
+	if err == nil {
+		fmt.Println(ret)
+	} else {
+		fmt.Println(fmt.Sprintf("error: %v", err))
+	}
 }
 
-func Run(args []string) error {
+func RunClusterCommand(args []string) error {
 	if args == nil || len(args) == 0 {
 		return fmt.Errorf("No subcommand provided !")
 	} else if args[0] == "status" {
@@ -51,7 +54,7 @@ var ClusterCommand = &cobra.Command{
 	Use:   "cluster",
 	Short: "tells you what cluster your on",
 	Run: func(cmd *cobra.Command, args []string) {
-		if err := Run(args); err != nil {
+		if err := RunClusterCommand(args); err != nil {
 			cmd.Help()
 		}
 	},
