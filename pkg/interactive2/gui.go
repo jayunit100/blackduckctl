@@ -66,9 +66,13 @@ func Launch() {
 					"throughput",
 					"ns-vuln",
 					"deploy",
+					"test",
 				},
 			}
-			prompt.Run()
+			_, val, _ := prompt.Run()
+			if val == "test" {
+				apps.OpsSightCommand.Run(apps.OpsSightCommand, []string{"test"})
+			}
 		}
 		if result == "blackduck" {
 			prompt := promptui.Select{

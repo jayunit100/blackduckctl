@@ -19,25 +19,30 @@ import (
 	"os/exec"
 	"time"
 
-	"github.com/jayunit100/blackduckctl/pkg/util"
 	"github.com/spf13/cobra"
 )
 
-func runCmd(cmd string, args ...string) {
+func runCmd(cmd string, args ...string) error {
 	cmd2 := exec.Command(cmd, args...)
-	err, ret := util.RunWithTimeout(cmd2, 10*time.Second)
-	if err == nil {
-		fmt.Println(ret)
-	} else {
-		fmt.Println(fmt.Sprintf("error: %v", err))
+	stdoutErr, err := cmd2.CombinedOutput()
+	fmt.Printf("%s\n", stdoutErr)
+	if err != nil {
+		fmt.Printf("Error running command !!!")
+		return err
 	}
+	fmt.Printf("%s\n", stdoutErr)
+	time.Sleep(1 * time.Second)
+	return nil
 }
 
 func RunClusterCommand(args []string) error {
 	if args == nil || len(args) == 0 {
 		return fmt.Errorf("No subcommand provided !")
 	} else if args[0] == "status" {
-		runCmd("kubectl", "cluster-info")
+		e := runCmd("kubectl", "cluster-info")
+		if e != nil {
+			runCmd("oc", "status")
+		}
 	} else if args[0] == "list" {
 		if args[1] == "hubs" {
 			runCmd("kubectl", "get", "hubs", "--all-namespaces")
