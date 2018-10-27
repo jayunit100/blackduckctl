@@ -15,23 +15,37 @@ package apps
 // limitations under the License.
 
 import (
+	"fmt"
+
+	"github.com/jayunit100/blackduckctl/pkg/util"
 	"github.com/spf13/cobra"
 )
 
-func Operator(args []string) error {
-	if args[0] == "init" {
-		// deployer, _ := integration.NewDeployerWithDefaultKubeconfig()
-		// deployer.Run()
-	}
-	return nil
+func RunClusterCommandListHubs() error {
+	err := util.RunKubeCmd("get", "hubs", "--all-namespaces")
+	return err
 }
 
-var OperatorCommand = &cobra.Command{
-	Use:   "operator initialize",
-	Short: "initialize the blackduck operator on your cluster",
+func RunClustercommandStatus() error {
+	e1 := util.RunKubeCmd("cluster-info")
+	return e1
+	// return both errors.. clumsy but comprehensive.
+}
+
+var ClusterCommand = &cobra.Command{
+	Use:   "cluster",
+	Short: "tells you what cluster your on",
+	Args: func(cmd *cobra.Command, args []string) error {
+		if args[0] == "list" || args[0] == "status" {
+			return fmt.Errorf("Require an action: list, or status.")
+		}
+		return nil
+	},
 	Run: func(cmd *cobra.Command, args []string) {
-		if err := Operator(args); err != nil {
-			cmd.Help()
+		if args[0] == "status" {
+			RunClustercommandStatus()
+		} else {
+			RunClusterCommandListHubs()
 		}
 	},
 }
