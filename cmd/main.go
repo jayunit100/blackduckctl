@@ -16,6 +16,8 @@ func main() {
 			fmt.Println("Executing command.")
 			apps.Execute()
 		}
+	} else {
+		panic("No args provided !")
 	}
-	fmt.Println("Goodbye !")
+
 }
